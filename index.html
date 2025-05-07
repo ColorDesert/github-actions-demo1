@@ -1,1 +1,65 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="shortcut icon" href="/github-actions-demo1/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="logo192.png"/><link rel="manifest" href="/github-actions-demo1/manifest.json"/><title>React App</title><script defer="defer" src="/github-actions-demo1/static/js/main.b85271fa.js"></script><link href="/github-actions-demo1/static/css/main.dae1a1dc.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <title>TestShareLink</title>
+    <script type="text/javascript">
+        window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1052023109827291',
+      xfbml      : true,
+      version    : 'v22.0'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+        function shareLink() {
+            var u = navigator.userAgent;
+            // Android
+            if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {
+                window.AndroidWebView.shareLink('{"link":"https://auror-cdn-web.puzzleplusgames.net/summer/sharePages/en/step1/share1/index.html#/firstPage"}');
+            }
+            // iOS
+            else if (u.indexOf('iPhone') > -1) {
+                window.webkit.messageHandlers.shareLink.postMessage('{"link":"https://auror-cdn-web.puzzleplusgames.net/summer/sharePages/en/step1/share1/index.html#/firstPage"}');
+            }
+        }
+
+        function shareLinkCallback(message) {
+            document.getElementById("shareLinkResult").innerHTML = "shareLinkResult: " + message;
+        }
+        function fbLogin(){
+        FB.login(function(response) {
+                      if (response.authResponse) {
+                           console.log('Welcome!  Fetching your information.... ');
+                           console.log(response);
+                            document.getElementById("log1").innerHTML =response;
+                           FB.api('/me', {fields: 'name, email'}, function(response) {
+                               document.getElementById("profile").innerHTML = "Good to see you, " + response.name + ". i see your email address is " + response.email
+                           });
+                      } else {
+                           <!-- If you are not logged in, the login dialog will open for you to login asking for permission to get your public profile and email -->
+                           console.log('User cancelled login or did not fully authorize.'); }
+
+            });}
+    </script>
+</head>
+<body>
+<p>
+    <button onclick="shareLink()" type="button">ShareLink</button>
+</p>
+<p>
+    <button onclick="fbLogin()" type="button">Facebook</button>
+</p>
+<p id="fbLogin"></p>
+<div id="shareLinkResult"></div>
+<div id="log1"></div>
+</body>
+</html>
