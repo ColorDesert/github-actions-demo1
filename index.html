@@ -42,6 +42,7 @@
                            console.log(response);
                              document.getElementById("log1").innerHTML =JSON.stringify(response);
                            FB.api('/me', {fields: 'name, email'}, function(response) {
+                               console.log(response);
                                document.getElementById("profile").innerHTML = "Good to see you, " + response.name + ". i see your email address is " + response.email
                            });
                       } else {
