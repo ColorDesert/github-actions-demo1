@@ -6,7 +6,7 @@
     <script type="text/javascript">
         window.fbAsyncInit = function() {
     FB.init({
-      appId      : '344660897847414',
+      appId      : '1052023109827291',
       xfbml      : true,
       version    : 'v22.0'
     });
@@ -40,16 +40,15 @@
                       if (response.authResponse) {
                            console.log('Welcome!  Fetching your information.... ');
                            console.log(response);
-                             document.getElementById("log1").innerHTML =JSON.stringify(response);
+                            document.getElementById("log1").innerHTML =JSON.stringify(response);
                            FB.api('/me', {fields: 'name, email'}, function(response) {
-                               console.log(response);
                                document.getElementById("profile").innerHTML = "Good to see you, " + response.name + ". i see your email address is " + response.email
                            });
                       } else {
                            <!-- If you are not logged in, the login dialog will open for you to login asking for permission to get your public profile and email -->
                            console.log('User cancelled login or did not fully authorize.'); }
 
-            });}
+            }, {scope: 'public_profile,email'});}
     </script>
 </head>
 <body>
@@ -62,5 +61,8 @@
 <p id="fbLogin"></p>
 <div id="shareLinkResult"></div>
 <div id="log1"></div>
+<div id="profile"></div>
 </body>
 </html>
+
+
