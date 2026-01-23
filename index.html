@@ -15,7 +15,17 @@
             const url = "https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?prepay_id=wx222058352143417f03e9a93d1f68060000&package=4135282900";
             window.location.href = url;   // 当前页面跳转
         }
+        const params = new URLSearchParams(window.location.search);
 
+        const timeStamp = params.get('timeStamp');
+        const nonceStr = params.get('nonceStr');
+        const package = params.get('package');
+        const paySign = params.get('paySign');
+
+        console.log("timeStamp:", timeStamp);
+        console.log("nonceStr:", nonceStr);
+        console.log("package:", package);
+        console.log("paySign:", paySign);
         function onBridgeReady() {
             const params = new URLSearchParams(window.location.search);
 
