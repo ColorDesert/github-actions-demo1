@@ -1,19 +1,52 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-  <meta charset="UTF-8">
-  <title>跳转示例</title>
+    <meta charset="UTF-8">
+    <title>跳转示例</title>
 </head>
+
 <body>
 
-<button onclick="goPay()">点击跳转</button>
+    <button onclick="goPay()">点击跳转</button>
 
-<script>
-  function goPay() {
-    const url = "https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?prepay_id=wx222058352143417f03e9a93d1f68060000&package=4135282900";
-    window.location.href = url;   // 当前页面跳转
-  }
-</script>
+    <script>
+        function goPay() {
+            const url = "https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?prepay_id=wx222058352143417f03e9a93d1f68060000&package=4135282900";
+            window.location.href = url;   // 当前页面跳转
+        }
+
+        function onBridgeReady() {
+            WeixinJSBridge.invoke('getBrandWCPayRequest', {
+                "appId": "wx2421b1c4370ec43b",     //公众号ID，由商户传入     
+                "timeStamp": "1395712654",     //时间戳，自1970年以来的秒数     
+                "nonceStr": "e61463f8efa94090b1f366cccfbbb444",      //随机串     
+                "package": "prepay_id=wx21201855730335ac86f8c43d1889123400",
+                "signType": "RSA",     //微信签名方式：     
+                "paySign": "oR9d8PuhnIc+YZ8cBHFCwfgpaK9gd7vaRvkYD7rthRAZ\/X+QBhcCYL21N7cHCTUxbQ+EAt6Uy+lwSN22f5YZvI45MLko8Pfso0jm46v5hqcVwrk6uddkGuT+Cdvu4WBqDzaDjnNa5UK3GfE1Wfl2gHxIIY5lLdUgWFts17D4WuolLLkiFZV+JSHMvH7eaLdT9N5GBovBwu5yYKUR7skR8Fu+LozcSqQixnlEZUfyE55feLOQTUYzLmR9pNtPbPsu6WVhbNHMS3Ss2+AehHvz+n64GDmXxbX++IOBvm2olHu3PsOUGRwhudhVf7UcGcunXt8cqNjKNqZLhLw4jq\/xDg==" //微信签名 
+            },
+                function (res) {
+                    if (res.err_msg == "get_brand_wcpay_request:ok") {
+                        console.log("支付成功");
+                    } else if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                        console.log("用户取消支付");
+                    } else {
+                        console.log("支付失败");
+                    }
+                });
+        }
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+        } else {
+            onBridgeReady();
+        }
+    </script>
 
 </body>
+
 </html>
