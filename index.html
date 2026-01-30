@@ -9,14 +9,25 @@
 <body>
 
     <button onclick="goPay()">点击跳转</button>
+    <div id="log"></div>
+
 
     <script>
         function goPay() {
             const url = "https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?prepay_id=wx222058352143417f03e9a93d1f68060000&package=4135282900";
             window.location.href = url;   // 当前页面跳转
         }
+        function logToLabel(msg) {
+            const el = document.getElementById('log');
+            el.innerText += msg + '\n';
+        }
+
+        // 用法
+        logToLabel('支付开始');
+        // logToLabel(JSON.stringify(res, null, 2));
 
         function onBridgeReady() {
+            logToLabel("WeixinJSBridge 已加载，开始支付...");
             const params = new URLSearchParams(window.location.search);
 
             const timeStamp = params.get('timeStamp');
@@ -39,16 +50,16 @@
             },
                 function (res) {
                     if (res.err_msg == "get_brand_wcpay_request:ok") {
-                        console.log("支付成功");
+                        logToLabel("支付成功");
                     } else if (res.err_msg == "get_brand_wcpay_request:cancel") {
-                        console.log("用户取消支付");
+                        logToLabel("用户取消支付");
                     } else {
-                        console.log("支付失败" + res.err_msg);
+                        logToLabel("支付失败" + res.err_msg);
                     }
                 });
         }
         if (typeof WeixinJSBridge == "undefined") {
-            console.log("WeixinJSBridge 未定义，等待加载...");
+            logToLabel("WeixinJSBridge 未定义，等待加载...");
             if (document.addEventListener) {
                 document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
             } else if (document.attachEvent) {
@@ -56,6 +67,7 @@
                 document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
             }
         } else {
+            logToLabel("WeixinJSBridge 已定义，直接调用...");
             onBridgeReady();
         }
     </script>
