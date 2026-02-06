@@ -1,9 +1,9 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
-    <title>跳转示例</title>
+    <title>支付</title>
 </head>
 
 <body>
@@ -25,7 +25,29 @@
         // 用法
         logToLabel('支付开始');
         // logToLabel(JSON.stringify(res, null, 2));
+        /**
+         * 检测当前是否运行在微信内置浏览器中
+         */
+        function detectWeChatBrowser() {
+            // 确保 navigator 对象存在（避免特殊运行环境报错）
+            if (typeof navigator === 'undefined') {
+                console.warn('当前环境无 navigator 对象，无法检测浏览器类型');
+                alert('无法检测浏览器类型');
+                return;
+            }
 
+            // 使用 includes 替代 indexOf，语义更清晰（ES6 特性，现代浏览器均支持）
+            const isWeChat = navigator.userAgent.includes('MicroMessenger');
+            //若需支持 IE11 等不支持 includes的旧浏览器，可将 includes替换为 indexOf !== -1
+            //const isWeChat = navigator.userAgent.indexOf('MicroMessenger') !== -1;
+
+            // 三元表达式简化条件输出
+            console.log(isWeChat ? '微信内置浏览器' : '外部浏览器');
+            alert(isWeChat ? '微信内置浏览器' : '外部浏览器');
+        }
+
+        // 执行检测
+        detectWeChatBrowser();
         function onBridgeReady() {
             logToLabel("WeixinJSBridge 已加载，开始支付...");
             const params = new URLSearchParams(window.location.search);
@@ -60,23 +82,27 @@
         }
         if (typeof WeixinJSBridge == "undefined") {
             logToLabel("WeixinJSBridge 未定义，等待加载...");
+            alert("WeixinJSBridge 未定义，等待加载...");
             if (document.addEventListener) {
+                alert("使用 addEventListener 监听 WeixinJSBridgeReady 事件");
                 document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
             } else if (document.attachEvent) {
+                alert("使用 attachEvent 监听 WeixinJSBridgeReady 事件");
                 document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
                 document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
             }
         } else {
             logToLabel("WeixinJSBridge 已定义，直接调用...");
+            alert("WeixinJSBridge 已定义，直接调用...");
             onBridgeReady();
         }
     </script>
 
 </body>
 
-</html> -->
+</html>
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="zh_CN">
 
 <head>
@@ -142,4 +168,4 @@
     })
 </script>
 
-</html>
+</html> -->
