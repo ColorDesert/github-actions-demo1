@@ -7,16 +7,8 @@
 </head>
 
 <body>
-
-    <button onclick="goPay()">点击跳转</button>
     <div id="log"></div>
-
-
     <script>
-        function goPay() {
-            const url = "https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?prepay_id=wx222058352143417f03e9a93d1f68060000&package=4135282900";
-            window.location.href = url;   // 当前页面跳转
-        }
         function logToLabel(msg) {
             const el = document.getElementById('log');
             el.innerText += msg + '\n';
@@ -24,30 +16,6 @@
 
         // 用法
         logToLabel('支付开始');
-        // logToLabel(JSON.stringify(res, null, 2));
-        /**
-         * 检测当前是否运行在微信内置浏览器中
-         */
-        function detectWeChatBrowser() {
-            // 确保 navigator 对象存在（避免特殊运行环境报错）
-            if (typeof navigator === 'undefined') {
-                console.warn('当前环境无 navigator 对象，无法检测浏览器类型');
-                alert('无法检测浏览器类型');
-                return;
-            }
-
-            // 使用 includes 替代 indexOf，语义更清晰（ES6 特性，现代浏览器均支持）
-            const isWeChat = navigator.userAgent.includes('MicroMessenger');
-            //若需支持 IE11 等不支持 includes的旧浏览器，可将 includes替换为 indexOf !== -1
-            //const isWeChat = navigator.userAgent.indexOf('MicroMessenger') !== -1;
-
-            // 三元表达式简化条件输出
-            console.log(isWeChat ? '微信内置浏览器' : '外部浏览器');
-            alert(isWeChat ? '微信内置浏览器' : '外部浏览器');
-        }
-
-        // 执行检测
-        detectWeChatBrowser();
         function onBridgeReady() {
             logToLabel("WeixinJSBridge 已加载，开始支付...");
             const params = new URLSearchParams(window.location.search);
@@ -82,18 +50,14 @@
         }
         if (typeof WeixinJSBridge == "undefined") {
             logToLabel("WeixinJSBridge 未定义，等待加载...");
-            alert("WeixinJSBridge 未定义，等待加载...");
             if (document.addEventListener) {
-                alert("使用 addEventListener 监听 WeixinJSBridgeReady 事件");
                 document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
             } else if (document.attachEvent) {
-                alert("使用 attachEvent 监听 WeixinJSBridgeReady 事件");
                 document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
                 document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
             }
         } else {
             logToLabel("WeixinJSBridge 已定义，直接调用...");
-            alert("WeixinJSBridge 已定义，直接调用...");
             onBridgeReady();
         }
     </script>
@@ -101,71 +65,3 @@
 </body>
 
 </html>
-
-<!-- <!DOCTYPE html>
-<html lang="zh_CN">
-
-<head>
-    <meta charset="UTF-8">
-    <title>JSSDK开发</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<body>
-    <h2>JSSDK开发</h2>
-
-    <button id="btn">扫一扫</button>
-    <button id="payBtn">微信内部网页支付</button>
-    <div id="cnt"></div>
-    <div id="payCnt"></div>
-
-</body>
-<script src="https://res2.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
-<script type="text/javascript">
-    const params = new URLSearchParams(window.location.search);
-
-    const timeStamp = params.get('timeStamp');
-    const nonceStr = params.get('nonceStr');
-    const package = params.get('package');
-    const paySign = params.get('paySign');
-    wx.config({
-        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-        appId: "wx01445b5db95b6132", // 必填，公众号的唯一标识
-        timestamp: timeStamp, // 必填，生成签名的时间戳
-        nonceStr: nonceStr, // 必填，生成签名的随机串
-        signature: paySign, // 必填，签名
-        jsApiList: ['scanQRCode', 'chooseWXPay'] // 必填，需要使用的JS接口列表
-    });
-
-    wx.ready(function () {
-        // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
-
-        document.getElementById('btn').onclick = function () {
-            wx.scanQRCode({
-                needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-                scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
-                success: function (res) {
-                    var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-                    document.getElementById('cnt').innerText = JSON.stringify(res);
-                }
-            })
-        }
-
-        // document.getElementById('payBtn').onclick = function () {
-        wx.chooseWXPay({
-            timestamp: timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-            nonceStr: nonceStr, // 支付签名随机串，不长于 32 位
-            package: package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-            signType: "RSA", // 微信支付V3的传入RSA,微信支付V2的传入格式与V2统一下单的签名格式保持一致
-            paySign: paySign, // 支付签名
-            success: function (res) {
-                // 支付成功后的回调函数
-                document.getElementById('payCnt').innerText = JSON.stringify(res);
-            }
-        });
-        //}
-
-    })
-</script>
-
-</html> -->
