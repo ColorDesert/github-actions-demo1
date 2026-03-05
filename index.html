@@ -15,22 +15,26 @@
     /* 外层容器 */
 
     .box {
-        margin: 100px 100px;
-        /* 左右100px */
+        margin: 0px;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     /* 卡片 */
 
-    .card {
+    #card {
         background: #fff;
+        width: calc(100% - 200px);
         border-radius: 20px;
-        padding: 40px 30px 90px;
+        padding: 80px 50px 190px;
         text-align: center;
         position: relative;
     }
 
     .icon {
-        width: 90px;
+        width: 300px;
         margin: auto;
     }
 
@@ -39,52 +43,43 @@
     }
 
     .title {
-        font-size: 26px;
-        margin: 15px 0 20px;
+        font-size: 66px;
+        margin: 15px 0 65px;
         color: #333;
     }
 
     .line {
-        border-top: 1px dashed #ddd;
+        border-top: 5px dashed #ddd;
         margin: 20px 0;
     }
 
     .row {
         display: flex;
         justify-content: space-between;
-        margin: 12px 0;
+        font-size: 40px;
+        margin: 52px 0;
     }
 
     .label {
         color: #999;
     }
 
-    .price {
+
+    #price {
         color: #ff8a00;
-        font-size: 22px;
+        font-size: 52px;
     }
 
-    .order {
+    #order {
         color: #333;
-        font-size: 14px;
-    }
-
-    /* 底部波浪 */
-
-    .wave {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 40px;
+        font-size: 44px;
     }
 </style>
 
 <body>
-    <div id="log"></div>
     <div class="box">
 
-        <div class="card">
+        <div id="card">
 
             <div class="icon">
                 <img src="wx.jpeg">
@@ -96,41 +91,31 @@
 
             <div class="row">
                 <div class="label">订单金额：</div>
-                <div class="price">¥6.00</div>
+                <div id="price">¥6.00</div>
             </div>
 
             <div class="row">
                 <div class="label">订单编号：</div>
-                <div class="order">SV202603051146536330394</div>
+                <div id="order">SV202603051146536330394</div>
             </div>
-            <div class="wave">
-                <svg viewBox="0 0 120 28" preserveAspectRatio="none">
-                    <path d="M0 20 Q10 0 20 20 T40 20 T60 20 T80 20 T100 20 T120 20 V30 H0 Z" fill="#f5f5f5" />
-                </svg>
-            </div>
-
         </div>
 
     </div>
     <script>
-        function logToLabel(msg) {
-            const el = document.getElementById('log');
-            el.innerText += msg + '\n';
-        }
-
-        // 用法
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('orderId');
+        const amount = params.get('amount');
+        const cardElement = document.getElementById("card");
+        document.getElementById("order").textContent = orderId;
+        document.getElementById("price").textContent = "¥" + Number(amount).toFixed(2);
+        //cardElement.style.display = "none";
         function onBridgeReady() {
-            const params = new URLSearchParams(window.location.search);
+            //const params = new URLSearchParams(window.location.search);
 
             const timeStamp = params.get('timeStamp');
             const nonceStr = params.get('nonceStr');
             const package = params.get('package');
             const paySign = params.get('paySign');
-
-            console.log("timeStamp:", timeStamp);
-            console.log("nonceStr:", nonceStr);
-            console.log("package:", package);
-            console.log("paySign:", paySign);
 
             WeixinJSBridge.invoke('getBrandWCPayRequest', {
                 "appId": "wx01445b5db95b6132",     //公众号ID，由商户传入     
@@ -142,12 +127,13 @@
             },
                 function (res) {
                     if (res.err_msg == "get_brand_wcpay_request:ok") {
-                        logToLabel("支付成功");
+                        console.log("支付成功");
                     } else if (res.err_msg == "get_brand_wcpay_request:cancel") {
-                        logToLabel("用户取消支付");
+                        console.log("用户取消支付");
                     } else {
-                        logToLabel("支付失败" + res.err_msg);
+                        console.log("支付失败" + res.err_msg);
                     }
+                    cardElement.style.display = "block";
                 });
         }
         if (typeof WeixinJSBridge == "undefined") {
